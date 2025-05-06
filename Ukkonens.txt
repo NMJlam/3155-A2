@@ -1,0 +1,31 @@
+---
+Suffix extension: 
+
+Case 1: 
+- Addition of a number into the node (this indicates that a new letter has been created) 
+
+Case 2a: Node already exists
+- Where there is already a node, such that there is a mismatch at a point "x" at the end of the path 
+	such that it mismatches with the current suffix, we extend the node by 1 additional character 
+
+Case 2b: No Node exists
+- When there is no node which exists, we create a new node to show that split along the path 
+
+Case 3:
+- Do nothing at all as the suffix is already in the tree and will be created in the final stage 
+- Whenever this rule is hit STOP immediately (Showstopper rule)
+
+---
+Suffix Links:
+
+- Only applicable to rule 2, where new internal nodes are created
+
+For a path called XA
+	x - the first character in the path of the string to a current node 
+	Alpha - the remainder of the string after removing x  
+Node variables: 
+	- Active Node (AN): The node that you have most recently traversed.
+	- Pending Node(PN): The node that is yet to have a suffix link (most recently created node). 
+	- Extension Point (EP): The point in the tree where the next rule 2 extension are applied. 
+
+Always point the pending node to node to the extension point. 
