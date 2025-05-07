@@ -62,29 +62,17 @@ class Ukkonens:
         
         self.active = curr.parent or curr 
         return curr # extension point  
+   
+    def make_extension(self, char_idx: int, remainder: int, extension_point: Node) -> None: 
 
-
-
-
-
-            
-
-            
-
-
-
-
-
-
-
-
-
-
-
-            
-
-            
-            
-            
-
-        
+        '''
+        r < L:
+            if compare the character along the where the remainder takes you to on the edge:
+                same -> extension 3 
+                diff -> extension 2 case 2
+        r = 0: 
+            if the current letter isnt inside the children -> extension 2 case 1
+        r > L: 
+            if child is a leaf -> extension 1 
+        '''
+        return 

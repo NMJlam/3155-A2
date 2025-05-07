@@ -8,9 +8,6 @@ class Node():
         self.suffixLink = None 
         self.children = {} # used to allow us to determine the path in skip counting (pg22)  
         self.parent = None 
-    
-    def set_suffix(self, extensionPoint: "Node"): 
-        self.suffixLink = extensionPoint  
 
     def add_child(self, char: str, child: "Node"): 
         self.children[char] = child 
@@ -19,7 +16,8 @@ class Node():
         self.stringTuple = [start, end]
 
     def suffix_extension1(self): 
-        self.stringTuple[1] += 1 
+        if self.stringTuple is not None: 
+            self.stringTuple[1] += 1 
     
-    def set_length(self, length: int): 
-        self.length = length
+    def length(self): 
+        return self.stringTuple[1] - self.stringTuple[0] + 1 if self.stringTuple is not None else 0 
