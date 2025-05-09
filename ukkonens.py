@@ -10,6 +10,7 @@ class Ukkonens:
         # NOTE: The active node is the node at which we are doing the extension  
         # NOTE: the Active node is the starting point of every traversal 
         self.active = None 
+        self.pending = None
 
     def construct(self) -> Node: 
 
@@ -23,13 +24,15 @@ class Ukkonens:
 
             for j in range(i): 
 
-                self.traverse(start, i, j)
+                remainder = self.traverse(start, i, j)
+                self.make_extension(remainder, globalEnd)
 
         return self.root 
 
-    def traverse(self, start: "Node", i:int, j:int) -> None: 
+    def traverse(self, start: "Node", i:int, j:int) -> Tuple[int, int]: 
         """
         sets the active node based on find the conditions of case 2.1 & 2.2
+        returns the remainder tuple (start: end) - this should also be the slice of the string
 
         We want to traverse to the point at which we are doing the extension (active node) 
             - This will allow us to perform the extensions at 2.1 or 2.2 
@@ -54,27 +57,36 @@ class Ukkonens:
             edge_length = child.length()
 
             if (rem <= edge_length): 
-                self.active = curr 
                 break 
 
             curr = child 
-            i += edge_length
+            j += edge_length
             rem -= edge_length
 
         self.active = curr 
+        return j,i 
 
-    def make_extension(self, char_idx: int, remainder: int, extension_point: Node) -> None: 
+    def make_extension(self, remainder : Tuple[int, int], globalEnd : int) -> None: 
         '''
-        r < L:
-            if compare the character along the where the remainder takes you to on the edge:
-                same -> extension 3 
-                diff -> extension 2 case 2
-        r = 0: 
-            if the current letter isnt inside the children -> extension 2 case 1
-        r > L: 
-            if child is a leaf -> extension 1 
+        Determine which extension we need to make based on the conditions of the active node
+        Case 1: Extension of the leaf 
+        Case 2a: Extension on a node 
+        Case 2b: Extension on an edge 
+        Case 3: Do Nothing 
         '''
-        pass 
+
+        rem_start, rem_end = remainder 
+        char = self.string[rem_start]
+        
+        # TODO: finish extensions 
+        # TODO: check if extension1 is valid or not 
+
+        if ( char not in self.active.children):
+
+            extension1 = Node()
+            extension1.setTuple(rem_start, globalEnd)
+            self.active.add_child(char, extension1)
+
 
     def resolveSuffixLinks(self) -> None: 
         # NOTE: Whenver you create a new internal node its suffix link is resolved in the next iteration - by the active node,  
@@ -91,10 +103,14 @@ class Ukkonens:
 
 if __name__ == "__main__": 
 
-    string = "abac"
+    string = "ab"
     u = Ukkonens(string)
     u.construct()
     print(u.active)
+    print(u.root.children)
+    print(string[0:2])
+    print(string[1:3])
+
 
 
     

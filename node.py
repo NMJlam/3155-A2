@@ -26,12 +26,10 @@ class Node:
         return self.stringTuple[1] - self.stringTuple[0]  if self.stringTuple is not None else 0 
 
     def __str__(self): 
-        return self.stringTuple if self.stringTuple is not None else "root"
+        return f"{self.stringTuple}" if self.stringTuple is not None else "root"
+
+    def __repr__(self): 
+        return f"{self.stringTuple}" if self.stringTuple is not None else "root"
 
 if __name__ == "__main__": 
-
-    string = "abac" 
-    node = Node() 
-    node.setTuple(0,1)
-    print(node.length()) 
-    print(string[0:2])
+    pass 
