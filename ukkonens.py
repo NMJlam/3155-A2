@@ -11,54 +11,58 @@ class Ukkonens:
         # NOTE: the Active node is the starting point of every traversal 
         self.active = None 
 
-    
     def construct(self) -> Node: 
 
         n = len(self.string)
         globalEnd = 0 
+        start = self.root
 
         for i in range(n): 
 
             globalEnd+=1
 
             for j in range(i): 
-                
-                extension_point, rem  = self.traverse(self.root, i-j, j) # traversing from the root to an extension point 
-                    # NOTE: here we have i-j as the length of the suffix that we wish to insert 
-                    # NOTE: j is the index of the character that we want to add 
 
-                self.make_extension(i, rem, extension_point)
-                self.resolveSuffixLinks()
-                self.moveToNextExtension()
-        
+                self.traverse(start, i, j)
+
         return self.root 
-        
-    def traverse(self, start: Node, remainder: int, char_idx: int) -> Tuple[Node, int]: 
-        # NOTE: we do not mention extension 1 only because the global end takes care of it  
-        curr, rem, = start, remainder
 
-        while (rem > 0): 
+    def traverse(self, start: "Node", i:int, j:int) -> None: 
+        """
+        sets the active node based on find the conditions of case 2.1 & 2.2
 
-            char = self.string[char_idx]
+        We want to traverse to the point at which we are doing the extension (active node) 
+            - This will allow us to perform the extensions at 2.1 or 2.2 
+        NOTE: extension 1,3 are handled differently:
+            1. Handled by the use of the globalEnd var, hence does not need to be encoded
+            3. When we hit this extension we just terminate using the showstopper rule 
+        """
+        rem = i - j 
+        curr = start 
+
+        while ( rem > 0): 
+            
+            # get first character to decide direction and then find the children 
+            char = self.string[j]
+
+            if (char not in curr.children): 
+                break 
+            
             child = curr.children[char]
+
+            # get the length of the traversal edge 
             edge_length = child.length()
 
-            # case by case: 
-            if 0 < rem < edge_length: 
-                return child, rem # landing in between an edge 
-            if rem == edge_length: 
-                curr = child 
-                rem = 0 # landing directly on the end of edge -> this means case 2,1
-                break
-            
-            rem -= edge_length
+            if (rem <= edge_length): 
+                self.active = curr 
+                break 
+
             curr = child 
-            self.active = curr # TODO: active node is what you have previously traversed 
-            char_idx += edge_length
+            i += edge_length
+            rem -= edge_length
 
-        return curr, rem  
+        self.active = curr 
 
-   
     def make_extension(self, char_idx: int, remainder: int, extension_point: Node) -> None: 
         '''
         r < L:
@@ -70,8 +74,8 @@ class Ukkonens:
         r > L: 
             if child is a leaf -> extension 1 
         '''
-        return 
-    
+        pass 
+
     def resolveSuffixLinks(self) -> None: 
         # NOTE: Whenver you create a new internal node its suffix link is resolved in the next iteration - by the active node,  
         # case 2a: An
@@ -85,3 +89,12 @@ class Ukkonens:
         # NOTE: if the suffix link lead to the root chop one off the start
         pass 
 
+if __name__ == "__main__": 
+
+    string = "abac"
+    u = Ukkonens(string)
+    u.construct()
+    print(u.active)
+
+
+    
