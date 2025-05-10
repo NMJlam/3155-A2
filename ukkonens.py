@@ -10,7 +10,9 @@ class Ukkonens:
         # NOTE: The active node is the node at which we are doing the extension  
         # NOTE: the Active node is the starting point of every traversal 
         self.active = None 
-        self.pending = None
+        self.pending = self.root 
+        self.showstopper = False  
+        self.internal_created =  False 
 
     def construct(self) -> Node: 
 
@@ -25,7 +27,10 @@ class Ukkonens:
             for j in range(i): 
 
                 remainder = self.traverse(start, i, j)
-                self.make_extension(remainder, globalEnd)
+                self.make_extension(i, j, remainder, globalEnd)
+
+                if ( self.showstopper ): 
+                    break 
 
         return self.root 
 
@@ -66,7 +71,7 @@ class Ukkonens:
         self.active = curr 
         return j,i 
 
-    def make_extension(self, remainder : Tuple[int, int], globalEnd : int) -> None: 
+    def make_extension(self, i: int, j:int, remainder : Tuple[int, int], globalEnd : int) -> None: 
         '''
         Determine which extension we need to make based on the conditions of the active node
         Case 1: Extension of the leaf 
@@ -75,17 +80,57 @@ class Ukkonens:
         Case 3: Do Nothing 
         '''
 
+        # break down the remainder to its length 
         rem_start, rem_end = remainder 
+        rem_len = rem_end - rem_start
+        
+        # NOTE: Case 2.1
+        # first character of the remainder
         char = self.string[rem_start]
         
-        # TODO: finish extensions 
-        # TODO: check if extension1 is valid or not 
+        # This indicates that we have fallen on the active node -> 2.1
+        if ( rem == 0 and 
+            char not in self.active.children): 
 
-        if ( char not in self.active.children):
+            self.internal_created = False 
 
+            # this is an example of extension 2.1 
             extension1 = Node()
             extension1.setTuple(rem_start, globalEnd)
             self.active.add_child(char, extension1)
+        
+        # NOTE: Case 2.2
+        # character at the point of traversal 
+        child = self.active.children[char]
+        child_start, child_end = child.stringTuple
+        edge_char = child_start + rem_len - 1 #TODO verify 
+        rem_char = j + rem_len - 1 # TODO: verify 
+
+        # This indicates that we have fallen on an edge -> 2.2 
+        if ( rem > 0 and 
+               self.string[edge_char] != self.string[rem_char] ): 
+
+            self.internal_created = True 
+            
+            # create 2 nodes: 1 for the existing path and the new one 
+            ex_path, new_path = Node(), Node() 
+
+            # set the start and ends of the children 
+            child.setTuple(child_start, edge_char -1)
+            ex_path.setTuple(edge_char, globalEnd)
+            new_path.setTuple(rem_char, globalEnd)
+
+            # put the children under the children node: 
+            child.add_child(self.string[edge_char], ex_path) # existing path 
+            child.add_child(self.string[rem_char], new_path) # new path 
+
+            # set the newly created node to the pending node 
+            self.pending = child
+
+        # TODO: verify that the rule 3 extension is always the last extension 
+        if ( self.string[edge_char] == self.string[rem_char]):
+            self.internal_created = False 
+            self.showstopper = True 
 
 
     def resolveSuffixLinks(self) -> None: 
