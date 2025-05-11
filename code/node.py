@@ -39,8 +39,14 @@ class Node:
         if not isinstance(other, Node): 
             return False 
         return ( other.stringTuple == self.stringTuple and 
-                other.suffixLink == self.suffixLink and 
-                sorted(other.children.items()) == sorted(self.children.items()) )
+                other.suffixLink == self.suffixLink ) 
+
+    def __neq__(self, other: "Node"):
+
+        if not isinstance(other, Node): 
+            return False 
+        return ( other.stringTuple != self.stringTuple and 
+                other.suffixLink != self.suffixLink ) 
 
 
 if __name__ == "__main__": 
