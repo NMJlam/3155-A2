@@ -28,7 +28,6 @@ class testUkkonens(unittest.TestCase):
     def test_abac(self): 
 
         g = Graph(0)
-        string_g  = g.string
         expected = Ukkonens("abac") 
 
         self.assertEqual( self.traversal_check (g.root, expected.root), 
@@ -36,7 +35,6 @@ class testUkkonens(unittest.TestCase):
 
     def test_abacabad(self): 
         g = Graph(1)
-        string_g  = g.string
         expected = Ukkonens("abacabad") 
 
         self.assertEqual( self.traversal_check (g.root, expected.root), 
